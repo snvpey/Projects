@@ -1,0 +1,210 @@
+import random
+import curses
+import time
+
+# Demande la taille, la difficulté et la durée
+size = int(input("Size of maze? "))
+difficulty = int(input("Difficulty (1 = Easy, 2 = Medium, 3 = Hard)? "))
+duration = int(input("Enter timer duration (in seconds): "))
+
+
+def test_recursif(maze, x, y, visited, keys):
+    # Vérifiez les limites de la grille
+    if x < 0 or y < 0 or x >= len(maze) or y >= len(maze[0]):
+        return False
+
+    # Si la position a déjà été visitée
+    if (x, y) in visited:
+        return False
+
+    # Si la case est un mur (1)
+    if maze[x][y] == 1:
+        return False
+
+    # Ajouter la position actuelle aux cases visitées
+    visited.add((x, y))
+
+    # Si la case contient une clé (3), la ramasser
+    if maze[x][y] == 3:
+        keys -= 1
+
+    # Si toutes les clés ont été récupérées et que l'on atteint la sortie (2)
+    if keys == 0 and maze[x][y] == 2:
+        return True
+
+    # Vérifier récursivement dans les quatre directions
+    if (
+            test_recursif(maze, x - 1, y, visited, keys) or  # Haut
+            test_recursif(maze, x + 1, y, visited, keys) or  # Bas
+            test_recursif(maze, x, y - 1, visited, keys) or  # Gauche
+            test_recursif(maze, x, y + 1, visited, keys)  # Droite
+    ):
+        return True
+
+    # Si aucune solution n'est trouvée, retourner False
+    return False
+
+
+def create_maze(size, difficulty):
+    while True:
+        # Création d'un labyrinthe de taille spécifiée rempli de murs (1)
+        maze = [[1 for _ in range(size)] for _ in range(size)]
+        # proportion de chemins selon la difficulté
+        if difficulty == 1:
+            prop_path = 0.9  # 90% de chemins
+        elif difficulty == 2:
+            prop_path = 0.75  # 75% de chemins
+        elif difficulty == 3:
+            prop_path = 0.6  # 60% de chemins
+        else:
+            prop_path = 0.9  # 90% par défaut
+        # Calcul nb de chemins à créer
+        nb_paths = int(size * size * prop_path)
+        # Génération aléatoire des chemins
+        paths = random.sample([(i, j) for i in range(size) for j in range(size)], nb_paths)
+        # Remplacer les cases par des chemins (0)
+        for path in paths:
+            maze[path[0]][path[1]] = 0
+        # Choisir aléatoirement une position sortie (2)
+        exit_pos = random.choice([(size - 1, size - 1), (0, size - 1), (size - 1, 0)])
+        maze[exit_pos[0]][exit_pos[1]] = 2  # Placer la sortie (2)
+        maze[0][0] = 0
+        # Test si un chemin existe entre l'entrée et la sortie
+        if test_recursif(maze, 0, 0, set(), 0):
+            return maze
+
+
+# Fonction pr créer personnage avec une position de départ
+def create_perso(start):
+    return {"char": "o", "x": start[0], "y": start[1]}
+
+
+# Fonction maj position du personnage
+def update_p(letter, perso, maze, lives):
+    # Déplacement haut (z)
+    if letter == 'z' and perso["x"] > 0 and maze[perso["x"] - 1][perso["y"]] != 1:
+        perso["x"] -= 1
+    # Déplacement bas (s)
+    elif letter == "s" and perso["x"] < len(maze) - 1 and maze[perso["x"] + 1][perso["y"]] != 1:
+        perso["x"] += 1
+    # Déplacement gauche (q)
+    elif letter == "q" and perso["y"] > 0 and maze[perso["x"]][perso["y"] - 1] != 1:
+        perso["y"] -= 1
+    # Déplacement droite (d)
+    elif letter == "d" and perso["y"] < len(maze) - 1 and maze[perso["x"]][perso["y"] + 1] != 1:
+        perso["y"] += 1
+    else:
+        # Si le mouvement est impossible, perdre une vie
+        lives -= 1
+    return lives
+
+
+# Fonction création objets à collecter
+def create_items(maze, num_items):
+    items = []
+    # Placer les objets aléatoirement sur des cases vides
+    while len(items) < num_items:
+        x, y = random.randint(0, len(maze) - 1), random.randint(0, len(maze) - 1)
+        if maze[x][y] == 0:  # Vérifie que l'emplacement est un chemin
+            items.append((x, y))
+    return items
+
+
+# Fonction dessine le labyrinthe avec le perso et objets
+def draw_maze_with_char_and_items(stdscr, maze, dico, items, perso, remaining_time):
+    for i in range(len(maze)):
+        for j in range(len(maze)):
+            # Afficher le personnage à sa position
+            if (i, j) == (perso["x"], perso["y"]):
+                if maze[i][j] == 2:
+                    stdscr.addstr(i, j, "oO")  # Afficher "oO" pour la sortie
+                else:
+                    stdscr.addstr(i, j, perso["char"])  # Afficher le personnage
+            # Afficher les objets à collecter
+            elif (i, j) in items:
+                stdscr.addstr(i, j, "*")  # Afficher un "*" pour les objets
+            else:
+                # Afficher les murs (#) et les chemins (espaces)
+                stdscr.addstr(i, j, dico[maze[i][j]])
+    # Afficher le temps restant
+    stdscr.addstr(len(maze) + 1, 0, f"Time remaining: {remaining_time} seconds")
+
+
+# Fonction pour collecter un objet quand le personnage le touche
+def collect_item(perso, items):
+    for coor in items[:]:
+        # Collecter si l'objet est à la même position que le personnage
+        if perso['x'] == coor[0] and perso['y'] == coor[1]:
+            items.remove(coor)
+
+
+# Fonction principale qui gère affichage et interactions du jeu
+def main(stdscr):
+    curses.curs_set(0)  # Masquer curseur
+    stdscr.nodelay(True)  # Permet lecture sans attendre l'entrée
+    stdscr.clear()  # Effacer l'écran
+
+    # Créer le labyrinthe, le personnage et les objets
+    maze = create_maze(size, difficulty)
+    perso = create_perso((0, 0))
+    items = create_items(maze, 3)
+    dico = {0: ' ', 1: '#', 2: 'O'}  # Dico des éléments à afficher
+    lives = 3  # Nombre de vies du joueur
+    move_counter = 0  # Compteur de mouvements du joueur
+    start_time = time.time()  # Chronomètre pour la durée du jeu
+
+    while True:
+        temps_écoulé = int(time.time() - start_time)  # Calcul du temps écoulé
+        remaining_time = duration - temps_écoulé  # Calcul du temps restant
+
+        stdscr.clear()  # Effacer l'écran avant chaque maj
+        draw_maze_with_char_and_items(stdscr, maze, dico, items, perso, remaining_time)  # Dessiner le labyrinthe
+        score = move_counter - (3 - len(items)) * 3  # Calcul du score
+        stdscr.addstr(size + 2, 0,
+                      f"Lives: {lives} | Moves: {move_counter} | Score: {score}  Items remaining: {len(items)}")
+        stdscr.refresh()  # Maj l'écran
+
+        if remaining_time <= 0:  # Si le temps est écoulé
+            stdscr.addstr(size + 4, 0, "Time's up! Press 'r' to restart or any other key to exit.")
+            stdscr.refresh()
+            stdscr.nodelay(False)  # Attendre une entrée
+            key = stdscr.getkey()
+            if key == 'r':  # Recommencer le jeu
+                main(stdscr)
+            break
+
+        try:
+            letter = stdscr.getkey()
+            if letter == 'r':  # Recommencer
+                main(stdscr)
+                break
+            lives = update_p(letter, perso, maze, lives)  # Maj position
+            collect_item(perso, items)  # Vérifier collecte
+            move_counter += 1  # Incrémenter mouvements
+        except curses.error:
+            pass
+
+        if lives == 0:  # Si toutes les vies sont perdues
+            stdscr.addstr(size + 4, 0, "Game Over! No lives left. Press 'r' to restart or any other key to exit.")
+            stdscr.refresh()
+            stdscr.nodelay(False)
+            key = stdscr.getkey()
+            if key == 'r':
+                main(stdscr)
+            break
+
+        if maze[perso["x"]][perso["y"]] == 2:  # Si le joueur atteint la sortie
+            score += 1
+            stdscr.addstr(size + 4, 0,
+                          f"Congratulations! Your score is {score}. Press 'r' to replay or any other key to exit.")
+            stdscr.refresh()
+            stdscr.nodelay(False)
+            key = stdscr.getkey()
+            if key == 'r':
+                main(stdscr)
+            break
+
+
+# Lancer le jeu via curses.wrapper
+if __name__ == "__main__":
+    curses.wrapper(main)
