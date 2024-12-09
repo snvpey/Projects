@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Portfolio</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-brand">Portfolio</div>
+            <ul class="nav-links">
+                <li><a href="#infos">Informations</a></li>
+                <li><a href="#projets">Projets</a></li>
+                <li><a href="#veille">Veille</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Section Informations Personnelles -->
+        <section id="infos" class="section">
+            <div class="container">
+                <h2>Informations Personnelles</h2>
+                <div class="info-content">
+                    <div class="profile-image">
+                        <img src="Hummel Alexis.jpg" alt="Photo de profil">
+                    </div>
+                    <div class="profile-info">
+                        <h3>Alexis Hummel</h3>
+                        <p class="title">Étudiant MIASHS</p>
+                        <div class="bio">
+                            <p>Passionné par le développement web et les nouvelles technologies, je crée des solutions numériques innovantes depuis plus de 5 ans.</p>
+                        </div>
+                        <div class="skills">
+                            <span>HTML5</span>
+                            <span>CSS3</span>
+                            <span>JavaScript</span>
+                            <span>Java</span>
+                            <span>Python</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Projets -->
+        <section id="projets" class="section">
+            <div class="container">
+                <h2>Mes Projets</h2>
+                <div class="projects-grid">
+                    <div class="project-card">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80" alt="Projet 1">
+                        <h3>Labyrinthe Python</h3>
+                        <p>Création d´un labyrinthe sur python a l´aide des bibliotheques curses et random.</p>
+                        <div class="project-links">
+                            <a href="#" class="btn">Voir le projet</a>
+                            <a href="https://github.com/snvpey/My-Codes/blob/main/Maze.txt" class="btn">GitHub</a>
+                        </div>
+                    </div>
+                    <div class="project-card">
+                        <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80" alt="Projet 2">
+                        <h3>Application Mobile</h3>
+                        <p>Application de gestion de tâches avec React Native</p>
+                        <div class="project-links">
+                            <a href="#" class="btn">Voir le projet</a>
+                            <a href="#" class="btn">GitHub</a>
+                        </div>
+                    </div>
+                    <div class="project-card">
+                        <img src="https://images.unsplash.com/photo-1522542550221-31fd19575a2d?auto=format&fit=crop&w=800&q=80" alt="Projet 3">
+                        <h3>Dashboard</h3>
+                        <p>Interface d'administration avec Vue.js et Firebase</p>
+                        <div class="project-links">
+                            <a href="#" class="btn">Voir le projet</a>
+                            <a href="#" class="btn">GitHub</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Veille Technologique -->
+        <section id="veille" class="section">
+            <div class="container">
+                <h2>Veille Technologique</h2>
+                <div class="veille-content">
+                    <p><strong>1) Contexte :</strong> Ces dernières années, l’importance des indicateurs de performance dans le football (P.I.) n’a cessé de croître. En cherchant à imiter les succès récents de clubs comme Brentford et Midtjylland, les équipes de football s’efforcent de maximiser l’utilisation des données pour identifier les failles de leur effectif et agir plus intelligemment sur le marché des transferts.</p>
+                    <p><strong>2) Les tendances actuelles :</strong> L’impact des algorithmes Expected Goals (xG) et Expected Assists (xA) dans les statistiques footballistiques est majeur. Les xG mesurent la probabilité qu’un tir se transforme en but, tandis que les xA évaluent les passes conduisant à des occasions de but. La vision par ordinateur et les modèles de deep learning aident à analyser les tactiques et performances.</p>
+                    <p><strong>3) Les futurs développements :</strong> Les recruteurs pourront détecter des talents sous-évalués, notamment grâce à des algorithmes prédictifs. Les compétitions moins médiatisées, comme celles en Afrique, bénéficieront également d’une collecte de données simplifiée.</p>
+                    <p><strong>4) Les défis :</strong> Bien que prometteuse, l’IA dans le football fait face à des limites, notamment la qualité des données dans les championnats moins médiatisés et les biais possibles dans les modèles.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Contact -->
+        <section id="contact" class="section">
+            <div class="container">
+                <h2>Contact</h2>
+                <div class="contact-content">
+                    <div class="contact-info">
+                        <h3>Mes Coordonnées</h3>
+                        <div class="contact-details">
+                            <p><strong>Email:</strong> alexis.hummel.pro@gmail.com</p>
+                            <p><strong>Téléphone:</strong> +33 7 44 84 95 10</p>
+                            <p><strong>Localisation:</strong> Paris, France</p>
+                        </div>
+                        <div class="social-links">
+                            <a href="https://www.linkedin.com/in/ahummel808" class="social-link">LinkedIn</a>
+                            <a href="https://github.com/snvpey" class="social-link">GitHub</a>
+                            <a id="downloadButton" href="cv-alexis-hummel.pdf" download>Download CV</a>
+                        </div>
+                    </div>
+                    <form id="contact-form" class="contact-form">
+                        <div class="form-group">
+                            <label for="name">Nom</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="captcha">Captcha : Résolvez cette opération</label>
+                            <span id="captcha-operation"></span>
+                            <input type="text" id="captcha" name="captcha" required>
+                            <button type="button" id="regenerate-captcha" class="btn">Régénérer</button>
+                        </div>
+                        <div id="message-sent" style="display:none;">Votre message a été envoyé avec succès !</div>
+                        <button type="submit" class="btn btn-primary">Envoyer</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
